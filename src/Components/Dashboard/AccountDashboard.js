@@ -23,7 +23,7 @@ const AccountDashboard = () => {
                 </div>
             ) : (
                 <>
-                    <AccountDetails />
+                    {/* <AccountDetails /> */}
                     <AccountSummary />
                     <AccountList accounts={profile?.accounts} />
                 </>

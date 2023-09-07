@@ -1,4 +1,6 @@
+
 import { Link } from "react-router-dom";
+import AllTransactions from "./AllTransactions";
 
 export default function AccountDetails() {
   return (
@@ -63,7 +65,7 @@ export default function AccountDetails() {
           </div>
         </div>
       </div>
-      {/* <AllTransactions account={account} /> */}
+      <AllTransactions  />
     </>
   );
 }
