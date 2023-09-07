@@ -1,129 +1,77 @@
-import { createContext, useReducer } from "react";
 import axios from "axios";
-import { API_URL_ACC } from "../../../utils/apiURL";
-import {
-  ACCOUNT_DETAILS_SUCCESS,
-  ACCOUNT_DETAILS_FAIL,
-  ACCOUNT_CREATION_SUCCES,
-  ACCOUNT_CREATION_FAIL,
-} from "./accountActionTypes";
+import { createContext, useReducer } from "react";
 
-export const accountContext = createContext();
-//Initial State
+import {
+    ACCOUNT_DETAILS_SUCCESS,
+    ACCOUNT_DETAILS_FAIL,
+} from "./accountActionTypes";
+import { API_URL_ACC } from "../../../utils/apiURL";
+
+export const authAccount = createContext();
 
 const INITIAL_STATE = {
-  userAuth: JSON.parse(localStorage.getItem("userAuth")),
-  account: null,
-  accounts: [],
-  loading: false,
-  error: null,
+    userAuth: JSON.parse(localStorage.getItem("userAuth")),
+    account: null,
+    accounts: [],
+    error: null,
+    loading: false,
 };
 
-//reducer
 const accountReducer = (state, action) => {
-  const { type, payload } = action;
-  switch (type) {
-    // Details
-    case ACCOUNT_DETAILS_SUCCESS:
-      return {
-        ...state,
-        account: payload,
-        loading: false,
-        error: null,
-      };
-    case ACCOUNT_DETAILS_FAIL:
-      return {
-        ...state,
-        account: null,
-        loading: false,
-        error: payload,
-      };
-    // Create
-    case ACCOUNT_CREATION_SUCCES:
-      return {
-        ...state,
-        account: payload,
-        loading: false,
-        error: null,
-      };
-    case ACCOUNT_CREATION_FAIL:
-      return {
-        ...state,
-        account: null,
-        loading: false,
-        error: payload,
-      };
-    default:
-      return state;
-  }
+    const { type, payload } = action;
+    switch (type) {
+        case ACCOUNT_DETAILS_SUCCESS:
+            return {
+                ...state,
+                account: payload,
+                loading: false,
+                error: null,
+            };
+        case ACCOUNT_DETAILS_FAIL:
+            return {
+                ...state,
+                account: null,
+                loading: false,
+                error: payload,
+            };
+        default:
+            return state;
+    }
 };
 
-//Provider
-export const AccountContextProvider = ({ children }) => {
-  const [state, dispatch] = useReducer(accountReducer, INITIAL_STATE);
-  console.log(state);
-  //Get account Details action
-  const getAccountDetailsAction = async id => {
-    const config = {
-      headers: {
-        Authorization: `Bearer ${state?.userauth?.token}`,
-        "Content-Type": "application/json",
-      },
-    };
-    try {
-      const res = await axios.get(`${API_URL_ACC}/${id}`, config);
+export const AuthAccount = ({ children }) => {
+    const [state, dispatch] = useReducer(accountReducer, INITIAL_STATE);
+    console.log(state);
 
-      if (res?.data?.status === "success") {
-        //dispatch
-        dispatch({
-          type: ACCOUNT_DETAILS_SUCCESS,
-          payload: res?.data?.data,
-        });
-      }
-    } catch (error) {
-      dispatch({
-        type: ACCOUNT_DETAILS_FAIL,
-        payload: error?.data?.response?.message,
-      });
-    }
-  };
-
-  //Get account Details action
-  const createAccountAction = async formData => {
-    console.log(state?.userAuth);
-    const config = {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${state?.userAuth?.token}`,
-      },
+    const getAccountDetails = async (id) => {
+        const config = {
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${state.userAuth?.token}`,
+            },
+        };
+        try {
+            const res = await axios.get(`${API_URL_ACC}/${id}`, config);
+            console.log(res);
+            if (res?.data?.status === "success") {
+                dispatch({
+                    type: ACCOUNT_DETAILS_SUCCESS,
+                    payload: res?.data?.data,
+                });
+            }
+        } catch (error) {
+            dispatch({
+                type: ACCOUNT_DETAILS_FAIL,
+                payload: error?.data?.message,
+            });
+        }
     };
-    try {
-      const res = await axios.post(`${API_URL_ACC}`, formData, config);
-      if (res?.data?.status === "success") {
-        //dispatch
-        dispatch({
-          type: ACCOUNT_CREATION_SUCCES,
-          payload: res?.data?.data,
-        });
-      }
-    } catch (error) {
-      console.log(error);
-      dispatch({
-        type: ACCOUNT_CREATION_FAIL,
-        payload: error?.data?.response?.message,
-      });
-    }
-  };
-  return (
-    <accountContext.Provider
-      value={{
-        getAccountDetailsAction,
-        account: state?.account,
-        createAccountAction,
-        error: state?.error,
-      }}
-    >
-      {children}
-    </accountContext.Provider>
-  );
+
+    return (
+        <authAccount.Provider
+            value={{ getAccountDetails, account: state.account }}
+        >
+            {children}
+        </authAccount.Provider>
+    );
 };

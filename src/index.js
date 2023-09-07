@@ -1,16 +1,18 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
-import AuthContext from './Components/context/AuthContext/AuthContext';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import "./index.css";
+import App from "./App";
+import reportWebVitals from "./reportWebVitals";
+import AuthContext from "./Components/context/AuthContext/AuthContext";
+import { AuthAccount } from "./Components/context/AccountContext/AccountContext";
 
-
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-  <AuthContext>
-    <App />
-  </AuthContext>
+    <AuthContext>
+        <AuthAccount>
+            <App />
+        </AuthAccount>
+    </AuthContext>
 );
 
 // If you want to start measuring performance in your app, pass a function
