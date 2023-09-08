@@ -62,7 +62,7 @@ export const AuthAccount = ({ children }) => {
         } catch (error) {
             dispatch({
                 type: ACCOUNT_DETAILS_FAIL,
-                payload: error?.data?.message,
+                payload: error?.response?.data?.message,
             });
         }
     };

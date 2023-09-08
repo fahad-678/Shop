@@ -1,10 +1,30 @@
-import React, { } from "react";
+import { React, useContext, useState } from "react";
 import { Link } from "react-router-dom";
-// import { authContext } from "../context/AuthContext/AuthContext";
+import { authContext } from "../context/AuthContext/AuthContext";
 
 const Register = () => {
-    let  fullname,onSubmitHandler, onChangeInput, email, password;
+    const { registerUserAction } = useContext(authContext);
+    const [register, setRegister] = useState({
+        fullname: "",
+        email: "",
+        password: "",
+    });
 
+    const { fullname, email, password } = register;
+
+    const onChangeInput = (e) => {
+        setRegister({
+            ...register,
+            [e.target.name]: e.target.value,
+        });
+    };
+    const onSubmitHandler = (e) => {
+        if (!email || !password || !fullname) {
+            return alert("Please fill all the form");
+        }
+        e.preventDefault();
+        registerUserAction(register);
+    };
     return (
         <>
             <section className="py-24 md:py-32 bg-white">
